@@ -5,6 +5,7 @@ const authenticateToken = require("../middleware/authenticateJwt");
 const md5 = require("md5");
 
 module.exports = (Pool) => {
+  // post
   router.post("/", async (req, res) => {
     const { user_email, user_password } = req.body;
     const hashedPassword = md5(user_password);
@@ -36,11 +37,11 @@ module.exports = (Pool) => {
 
   router.get("/protected", authenticateToken, (req, res) => {
     // Access user information from the request object
-    const { userId, userRole } = req.user;
+    const { user_id, user_role } = req.user;
 
     res.json({
-      userId,
-      userRole,
+      user_id,
+      user_role,
       message: "Access granted to protected route",
     });
   });

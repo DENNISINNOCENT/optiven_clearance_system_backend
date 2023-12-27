@@ -12,21 +12,20 @@ const generateToken = (user) => {
   // token expiration
   const options = {
     expiresIn: "1h",
-  };
+  }
   return jwt.sign(payload, secretKey, options);
 };
 
-const verifyToken =async (token) => {
+const verifyToken = (token) => {
+  console.log('Received Token:', token);
   try {
-    const decoded = await jwt.verify(token, secretKey);
+    const decoded = jwt.verify(token, secretKey);
     return decoded;
-  } catch (err) {
-    if(err.name ==='TokenExpiredError'){
-        throw new Error('Token expired')
-    }
-    throw new Error("Invalid token");
+  } catch (error) {
+    console.error('Token Verification Error:', error.message);
+    throw new Error('Invalid token');
   }
-};
+}
 module.exports = {
   generateToken,
   verifyToken,
