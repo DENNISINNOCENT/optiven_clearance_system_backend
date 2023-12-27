@@ -34,9 +34,12 @@ const optiven_clearance_pool = mysql.createPool({
 // Import optiven_clearance routes
 const employees = require('./routes/optiven_clearance/employees.routes');
 const users = require('./routes/optiven_clearance/users.routes');
+const login = require('./auth/login.routes')
+
 
 app.use('/employees', employees(optiven_clearance_pool));
 app.use('/users',users(optiven_clearance_pool));
+app.use('/auth',login(optiven_clearance_pool))
 
 
 app.listen(Port, () => {
