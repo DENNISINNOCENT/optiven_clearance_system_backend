@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcrypt");
 
 // user routers
 
@@ -17,8 +18,57 @@ module.exports = (Pool) => {
         user_password,
         confirm_password,
       } = req.body;
+      // user validations
+      // all fields required
+      if (
+        !first_name ||
+        !middle_name ||
+        !surname ||
+        !user_email ||
+        !user_role ||
+        !user_contact ||
+        !user_password ||
+        !confirm_password
+      ) {
+        return res.status(400).json({
+          message: "All fields are required",
+        });
+      }
+      // email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailRegex.test(user_email)) {
+        return res.status(400).json({
+          message: "Invalid email address.",
+        });
+      }
+      // password validation
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+      if (!passwordRegex.test(user_password)) {
+        return res.status(400).json({
+          message:
+            "Password must be at least 8 characters long and include at least one letter and one number.",
+        });
+      }
+      // password_confirmation validation
+      if (user_password !== confirm_password) {
+        return res.status(400).json({
+          message: "Password and confirm password do not match.",
+        });
+      }
+      // bcrypting my password to be stored as hashed
+      const hashedPassword = await bcrypt.hash(user_password, 10);
+
+      // adding user_roles
+      const allowedRoutes = ["hr", "marketer", "legal", "ict"];
+      if (!allowedRoutes.includes(user_role)) {
+        return res.status(400).json({
+          message: "Invalid user role",
+        });
+      }
       Pool.query(
-        "INSERT INTO users( first_name, middle_name,surname,user_email, user_role, user_contact, user_password, confirm_password)VALUES(?,?,?,?,?,?,?,?)",
+        "INSERT INTO users( first_name, middle_name,surname,user_email, user_role, user_contact, user_password)VALUES(?,?,?,?,?,?,?)",
         [
           first_name,
           middle_name,
@@ -26,11 +76,13 @@ module.exports = (Pool) => {
           user_email,
           user_role,
           user_contact,
-          user_password,
-          confirm_password,
+          hashedPassword,
+         
+         
         ],
         (err, results) => {
           if (err) {
+           
             console.error("error in adding user", err);
             res.status(500).json({
               message: "user not added",
@@ -51,7 +103,7 @@ module.exports = (Pool) => {
   });
 
   // Get request
-  router.get("/", (req, res) => {
+  router.get("/", async (req, res) => {
     try {
       Pool.query("SELECT * FROM users", (err, results) => {
         if (err) throw err;
@@ -137,36 +189,33 @@ module.exports = (Pool) => {
       });
     }
   });
-//   delete functionality
-router.delete('/:id',(req,res)=>{
-
-    try{
-        const{id} = req.params
-        Pool.query(
-            'DELETE FROM users WHERE user_id = ?',[id], (err,results) => {
-                if(err) throw err
-                if (results.affectedRows > 0){
-                    res.status(200).json({
-                        message:"User deleted Successfully"
-                    })
-                }else{
-                    res.status(404).json({
-                        message:"user not found"
-                    })
-                }
-
-
-            }
-        )
-
-    }catch(error){
-        console.error("User not found" ,error)
-        res.status(500).json({
-            message:"user not deleted"
-        })
-
+  //   delete functionality
+  router.delete("/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      Pool.query(
+        "DELETE FROM users WHERE user_id = ?",
+        [id],
+        (err, results) => {
+          if (err) throw err;
+          if (results.affectedRows > 0) {
+            res.status(200).json({
+              message: "User deleted Successfully",
+            });
+          } else {
+            res.status(404).json({
+              message: "user not found",
+            });
+          }
+        }
+      );
+    } catch (error) {
+      console.error("User not found", error);
+      res.status(500).json({
+        message: "user not deleted",
+      });
     }
-})
+  });
 
   return router;
 };
