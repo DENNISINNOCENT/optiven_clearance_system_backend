@@ -1,18 +1,19 @@
 const express = require("express");
 const router = express.Router();
 
+
 module.exports = (Pool) => {
   router.get("/", async (req, res) => {
     try {
-       Pool.query("SELECT * FROM employeeData",(err,results) =>{
-        if(err) throw err
-        res.json(results);
-       });
+       Pool.query("SELECT * FROM employeeData",(err,results)=>{
+        if (err) throw err
+        res.status(200).json(results);
+       }) 
       
     } catch (err) {
       console.error("Error fetching data:", err);
       res.status(500).json({
-        message: 'An error occurred while fetching data',
+        message: "An error occurred while fetching data",
       });
     }
   });
@@ -23,22 +24,18 @@ module.exports = (Pool) => {
         employee_name,
         employee_email,
         employee_phone,
-        employee_role,
         employee_department,
-        status
       } = req.body;
+      if(!employee_email || !employee_name || !employee_phone   || !employee_department){
+        return res.status(404).json({
+          message:"All field are required"
+        })
 
-     Pool.query(
-        "INSERT INTO employeeData (employee_name, employee_email, employee_phone, employee_role, employee_department,status) VALUES (?, ?, ?, ?, ?, ?)",
-        [
-         
-          employee_name,
-          employee_email,
-          employee_phone,
-          employee_role,
-          employee_department,
-          status
-        ]
+      }
+
+       Pool.query(
+        "INSERT INTO employeeData (employee_name, employee_email, employee_phone, employee_department) VALUES (?, ?, ?, ?)",
+        [employee_name, employee_email, employee_phone, employee_department]
       );
 
       res.status(201).json({
@@ -55,8 +52,6 @@ module.exports = (Pool) => {
   router.put("/:id", (req, res) => {
     // Implementation for update
   });
-
-  
 
   router.delete("/:id", (req, res) => {
     // Implementation for delete

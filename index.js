@@ -2,10 +2,14 @@ const express = require('express');
 const app = express();
 const Port = process.env.PORT || 5000;
 require('dotenv').config();
+const cors =require('cors')
 const mysql = require('mysql2');
+// middlewares
+
 const bodyparser = require('body-parser');
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended: true}));
+app.use(cors())
 
 
 // Creating database pool
@@ -36,7 +40,7 @@ const employees = require('./routes/optiven_clearance/employees.routes');
 const users = require('./routes/optiven_clearance/users.routes');
 const login = require('./auth/login.routes')
 
-
+// route middlewares
 app.use('/employees', employees(optiven_clearance_pool));
 app.use('/users',users(optiven_clearance_pool));
 app.use('/auth',login(optiven_clearance_pool))
