@@ -11,6 +11,11 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(cors())
 
+app.use((req, res, next) => {
+  console.log('Incoming Request Body:', req.body);
+  next();
+});
+
 
 // Creating database pool
 const optiven_clearance_pool = mysql.createPool({
