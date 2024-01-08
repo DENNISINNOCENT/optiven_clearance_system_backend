@@ -8,6 +8,8 @@ module.exports = (Pool) => {
   // post
   router.post("/", async (req, res) => {
     const { user_email, user_password } = req.body;
+    console.log('User email:', user_email);
+    console.log('User password:', user_password);
     const hashedPassword = md5(user_password);
 
     try {

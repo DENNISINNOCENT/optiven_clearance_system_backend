@@ -144,7 +144,7 @@ module.exports = (Pool) => {
     }
   });
   //   update functionality
-  router.patch("/:id", async (req, res) => {
+  router.put("/:id", async (req, res) => {
     try {
       const {
         first_name,
