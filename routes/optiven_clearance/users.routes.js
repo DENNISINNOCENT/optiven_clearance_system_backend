@@ -15,6 +15,7 @@ module.exports = (Pool) => {
         surname,
         user_email,
         user_role,
+        user_department,
         user_contact,
         user_password,
         confirm_password,
@@ -27,6 +28,7 @@ module.exports = (Pool) => {
         !surname ||
         !user_email ||
         !user_role ||
+        !user_department||
         !user_contact ||
         !user_password ||
         !confirm_password
@@ -69,13 +71,14 @@ module.exports = (Pool) => {
         });
       }
       Pool.query(
-        "INSERT INTO users( first_name, middle_name,surname,user_email, user_role, user_contact, user_password)VALUES(?,?,?,?,?,?,?)",
+        "INSERT INTO users( first_name, middle_name,surname,user_email, user_role,user_department, user_contact, user_password)VALUES(?,?,?,?,?,?,?,?)",
         [
           first_name,
           middle_name,
           surname,
           user_email,
           user_role,
+          user_department,
           user_contact,
           hashedPassword,
          
@@ -152,6 +155,7 @@ module.exports = (Pool) => {
         surname,
         user_email,
         user_role,
+        user_department,
         user_contact,
         user_password,
         confirm_password,
@@ -165,6 +169,7 @@ module.exports = (Pool) => {
           surname,
           user_email,
           user_role,
+          user_department,
           user_contact,
           user_password,
           confirm_password,

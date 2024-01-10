@@ -23,10 +23,11 @@ module.exports = (Pool) => {
       const {
         employee_name,
         employee_email,
+        employee_number,
         employee_phone,
         employee_department,
       } = req.body;
-      if(!employee_email || !employee_name || !employee_phone   || !employee_department){
+      if(!employee_email || !employee_name || !employee_phone   || !employee_department || !employee_number){
         return res.status(404).json({
           message:"All field are required"
         })
@@ -34,8 +35,8 @@ module.exports = (Pool) => {
       }
 
        Pool.query(
-        "INSERT INTO employeeData (employee_name, employee_email, employee_phone, employee_department) VALUES (?, ?, ?, ?)",
-        [employee_name, employee_email, employee_phone, employee_department]
+        "INSERT INTO employeeData (employee_name, employee_email,employee_number, employee_phone, employee_department) VALUES (?, ?, ?, ?,?)",
+        [employee_name, employee_email,employee_number, employee_phone, employee_department]
       );
 
       res.status(201).json({
