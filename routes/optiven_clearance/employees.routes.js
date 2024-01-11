@@ -26,6 +26,8 @@ module.exports = (Pool) => {
         employee_number,
         employee_phone,
         employee_department,
+
+       
       } = req.body;
       if(!employee_email || !employee_name || !employee_phone   || !employee_department || !employee_number){
         return res.status(404).json({
@@ -50,9 +52,42 @@ module.exports = (Pool) => {
     }
   });
 
-  router.put("/:id", (req, res) => {
-    // Implementation for update
+  router.put("/:id", async (req, res) => {
+    try {
+      const {id} = req.params;
+      const {
+        employee_name,
+        employee_email,
+        employee_number,
+        employee_phone,
+        employee_department,
+        status, // This can be updated dynamically
+      } = req.body;
+  
+      if (!status) {
+        return res.status(400).json({
+          message: "Status field is required for updating",
+        });
+      }
+  
+      Pool.query(
+        "UPDATE employeeData SET employee_name=?, employee_email=?, employee_number=?, employee_phone=?, employee_department=?, status=? WHERE employee_id=?",
+        [employee_name, employee_email, employee_number, employee_phone, employee_department, status,id],
+        (err, results) => {
+          if (err) throw err;
+          res.status(200).json({
+            message: "Data updated successfully",
+          });
+        }
+      );
+    } catch (err) {
+      console.error("Error updating data:", err);
+      res.status(500).json({
+        message: "Data not updated",
+      });
+    }
   });
+  
 
   router.delete("/:id", (req, res) => {
     // Implementation for delete
